@@ -37,16 +37,16 @@ var cell = function(x,y,bool) {
 	returnObj.y = y;
 	returnObj.b = bool;
 	returnObj.reDraw = function(){
-		if(returnObj.b == true) {
-			//console.log("they are the same!");
-			ctx.fillStyle = "#FFFFFF";
-			var posX = returnObj.x*(cellDimension+offset);
-			var posY = returnObj.y*(cellDimension+offset);
-			ctx.fillRect(posX,posY,cellDimension, cellDimension);
-		}
+		// if(returnObj.b == true) {
+		// 	//console.log("they are the same!");
+		// 	ctx.fillStyle = "#ffff00";
+		// 	var posX = returnObj.x*(cellDimension+offset);
+		// 	var posY = returnObj.y*(cellDimension+offset);
+		// 	ctx.fillRect(posX,posY,cellDimension, cellDimension);
+		// }
 		if(returnObj.b == false)
 		{
-			ctx.fillStyle = '#000000';
+			ctx.fillStyle = '#838B8B';
 			var posX = returnObj.x*(cellDimension+offset);
 			var posY = returnObj.y*(cellDimension+offset);
 			ctx.fillRect(posX,posY,cellDimension, cellDimension);
@@ -54,16 +54,16 @@ var cell = function(x,y,bool) {
 	};
 	returnObj.draw = function(){
 		
-		if(returnObj.b == true) {
-			//console.log(returnObj.b)
-			ctx.fillStyle = "#FFFFFF";
-			var posX = returnObj.x*(cellDimension+offset);
-			var posY = returnObj.y*(cellDimension+offset);
-			ctx.fillRect(posX,posY,cellDimension, cellDimension);
-		}
+		// if(returnObj.b == true) {
+		// 	//console.log(returnObj.b)
+		// 	ctx.fillStyle = "#00000";
+		// 	var posX = returnObj.x*(cellDimension+offset);
+		// 	var posY = returnObj.y*(cellDimension+offset);
+		// 	ctx.fillRect(posX,posY,cellDimension, cellDimension);
+		//  }
 		if(returnObj.b == false)
 		{
-			ctx.fillStyle = '#000000';
+			ctx.fillStyle = '#838B8B';
 			var posX = returnObj.x*(cellDimension+offset);
 			var posY = returnObj.y*(cellDimension+offset);
 			ctx.fillRect(posX,posY,cellDimension, cellDimension);
@@ -78,11 +78,28 @@ var cell = function(x,y,bool) {
 var cells = [];
 var init = function(){
 
+	ctx.fillStyle = "#00000";
+	ctx.fillRect(0,0,1000,600);
+	
+
+	
 	for(var i = 0; i < numCellsW; i++)
 	{
 		cells[i] = [];
 		for (var j = 0; j < numCellsH; j++) {
-			cells[i][j] = cell(i,j, bool);
+
+			var math = Math.random()*10;
+			var rand = Math.floor(math);
+			var cellBool;
+			console.log(rand)
+			if(rand < 5)
+			{
+				cellBool = true;
+			}
+			else
+				cellBool = false;
+
+			cells[i][j] = cell(i,j, cellBool);
 			cells[i][j].draw();
 		};
 	}
@@ -90,6 +107,8 @@ var init = function(){
 };
 var update = function(tempCells){
 
+	ctx.fillStyle = '#000000';
+	ctx.fillRect(0,0,1000,600);
 
 
 	for(var i =1; i<numCellsW-1;i++)
@@ -145,6 +164,7 @@ var update = function(tempCells){
 			else
 				tempCells[i][j].b = true;
 		}
+		
 	}
 
 
