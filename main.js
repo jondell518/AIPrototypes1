@@ -15,19 +15,25 @@ else
 	console.log("Loop already started fool!");
 });
 var loopStarted = false;
+var myInterval;
 var startButton = document.getElementById("startButton");
 startButton.addEventListener('click', function(){
 	console.log("Process started!");
 	loopStarted = true;
-	setInterval(loop, 1000/fps)
+	myInterval = setInterval(loop, 1000/fps)
+})
+var stopButton = document.getElementById("stopButton");
+stopButton.addEventListener('click', function(){
+	loopStarted = false;
+	clearInterval(myInterval);
 })
 var ctx = c.getContext("2d");
-var fps = 10;
+var fps = 5;
 var x = 0;
 var y = 0;
 var cellDimension = 10;
-var numCellsW = 250;
-var numCellsH = 250;
+var numCellsW = 50;
+var numCellsH = 50;
 var offset = 2;
 var bool = true;
 
@@ -36,37 +42,30 @@ var cell = function(x,y,bool) {
 	returnObj.x = x;
 	returnObj.y = y;
 	returnObj.b = bool;
-	returnObj.reDraw = function(){
-		// if(returnObj.b == true) {
-		// 	//console.log("they are the same!");
-		// 	ctx.fillStyle = "#ffff00";
-		// 	var posX = returnObj.x*(cellDimension+offset);
-		// 	var posY = returnObj.y*(cellDimension+offset);
-		// 	ctx.fillRect(posX,posY,cellDimension, cellDimension);
-		// }
-		if(returnObj.b == false)
-		{
-			ctx.fillStyle = '#838B8B';
-			var posX = returnObj.x*(cellDimension+offset);
-			var posY = returnObj.y*(cellDimension+offset);
-			ctx.fillRect(posX,posY,cellDimension, cellDimension);
+	returnObj.cellLock = false;
+	returnObj.reDraw = function(color){
+		if(returnObj.cellLock === false){
+			var COLOR = color;
+			if(returnObj.b === false)
+			{
+				ctx.fillStyle = COLOR;
+				var posX = returnObj.x*(cellDimension+offset);
+				var posY = returnObj.y*(cellDimension+offset);
+				ctx.fillRect(posX,posY,cellDimension, cellDimension);
+			}
 		}
+		
+
 	};
 	returnObj.draw = function(){
-		
-		// if(returnObj.b == true) {
-		// 	//console.log(returnObj.b)
-		// 	ctx.fillStyle = "#00000";
-		// 	var posX = returnObj.x*(cellDimension+offset);
-		// 	var posY = returnObj.y*(cellDimension+offset);
-		// 	ctx.fillRect(posX,posY,cellDimension, cellDimension);
-		//  }
-		if(returnObj.b == false)
-		{
-			ctx.fillStyle = '#838B8B';
-			var posX = returnObj.x*(cellDimension+offset);
-			var posY = returnObj.y*(cellDimension+offset);
-			ctx.fillRect(posX,posY,cellDimension, cellDimension);
+		if(returnObj.cellLock === false){
+			if(returnObj.b === false)
+			{
+				ctx.fillStyle = '#838B8B';
+				var posX = returnObj.x*(cellDimension+offset);
+				var posY = returnObj.y*(cellDimension+offset);
+				ctx.fillRect(posX,posY,cellDimension, cellDimension);
+			}
 		}
 
 	};
@@ -91,7 +90,6 @@ var init = function(){
 			var math = Math.random()*10;
 			var rand = Math.floor(math);
 			var cellBool;
-			console.log(rand)
 			if(rand < 5)
 			{
 				cellBool = true;
@@ -106,7 +104,7 @@ var init = function(){
 
 };
 var update = function(tempCells){
-
+	console.log("Update called!");
 	ctx.fillStyle = '#000000';
 	ctx.fillRect(0,0,1000,600);
 
@@ -116,17 +114,21 @@ var update = function(tempCells){
 		for(var j = 1; j <numCellsH-1; j++)
 		{
 			var liveCounter = 0;
+			var squareCounter = 0;
 			if(cells[i+1][j].b === false)
 			{
 				liveCounter++;
+				squareCounter++;
 			}
 			if(cells[i+1][j+1].b === false)
 			{
 				liveCounter++;
+				squareCounter++;
 			}
 			if(cells[i+1][j-1].b === false)
 			{
 				liveCounter++;
+				squareCounter++;
 			}
 			if(cells[i][j+1].b === false)
 			{
@@ -149,41 +151,70 @@ var update = function(tempCells){
 				liveCounter++;
 			}
 
+			// if(cells[i][j].b === false && squareCounter === 3)
+			// {
+			// 	//console.log("SQUARE SHOULD BE LOCKED");
+			// 	tempCells[i][j].reDraw("#FFF000");
+			// 	tempCells[i][j].cellLock = true;
+			// 	//console.log(cells[i][j].cellLock);
+			// }
 			if(cells[i][j].b === true && liveCounter === 3)
-			{
-				tempCells[i][j].b = false;
+			{	
+				
+					tempCells[i][j].b = false;
+				
 			}
 			if(cells[i][j].b === false && liveCounter === 2)
 			{
-				tempCells[i][j].b = false;
+				
+					tempCells[i][j].b = false;
 			}
-			if(cells[i][j].b === false && liveCounter === 3)
-			{
-				tempCells[i][j].b = false;
+				if(cells[i][j].b === false && liveCounter === 3)
+				{
+					
+						tempCells[i][j].b = false;
+					
+				}
+				else
+				{
+					
+						tempCells[i][j].b = true;
+					
+				}
 			}
-			else
-				tempCells[i][j].b = true;
+
 		}
+
+
+
+
+
+
+	}
+	var tempCells = [];
+	var loop = function(){
 		
-	}
+		var row;
+		for(var k = 0; k<numCellsW;k++)
+		{
+			row = [];
+			for(var x =0; x<cells[0].length;x++)
+			{
+				row[x] = cells[k][x];
+			}
+			tempCells[k] = row;
+		}
+		update(tempCells);
 
+		for(var i = 0; i < numCellsW; i++)
+		{
+			for (var j = 0; j < numCellsH; j++) {
 
-
-
-
-
-}
-var loop = function(){
-	var tempCells = cells.slice(0,cells.length)
-	console.log("tempcells initialized: " + tempCells);
-	update(tempCells);
-	//cells = tempCells.slice(0,tempCells.length);
-	for(var i = 0; i < numCellsW; i++)
-	{
-		for (var j = 0; j < numCellsH; j++) {
-			cells[i][j].reDraw();
-		};
-	}
+				if(cells[i][j].cellLock === false){
+					cells[i][j].reDraw("#838B8B");
+				}
+			};
+		}
 	// console.log("loop finished being called!");
 }
 init();
