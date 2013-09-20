@@ -8,12 +8,13 @@ c.addEventListener('click',function(evt){
 	{
 		cells[indexX][indexY].b = false;
 	//cells[indexX][indexY].clear();
-	cells[indexX][indexY].draw();
+	cells[indexX][indexY].draw("#838B8B");
 	console.log(indexX + " " + indexY);
 	}
 else
 	console.log("Loop already started fool!");
 });
+
 var loopStarted = false;
 var myInterval;
 var startButton = document.getElementById("startButton");
@@ -27,7 +28,6 @@ stopButton.addEventListener('click', function(){
 	loopStarted = false;
 	clearInterval(myInterval);
 })
-
 var genButton = document.getElementById("genCells");
 genButton.addEventListener('click', function(){
 
@@ -197,7 +197,7 @@ var update = function(){
 						tempCells[i][j] = true;
 					}
 				}
-			}
+			
 
 			if(cells[i][j].b === false && liveCounter === 4)
 			{
@@ -206,7 +206,7 @@ var update = function(){
 				tempCells[i][j] = false;
 				cells[i][j].cellLock = true;
 				lockedCells[k] = cells[i][j];
-				lockedCells[k].color = '#F4C430';
+				lockedCells[k].color = '#FFA500';
 				k++;
 				//console.log(cells[i][j].cellLock);
 			}
@@ -215,7 +215,7 @@ var update = function(){
 				tempCells[i][j] = false;
 				cells[i][j].cellLock = true;
 				lockedCells[k] = cells[i][j];
-				lockedCells[k].color = '#DAA520';
+				lockedCells[k].color = '#800000';
 				k++;
 			}
 			if(cells[i][j].b === false && liveCounter === 6)
@@ -223,10 +223,10 @@ var update = function(){
 				tempCells[i][j] = false;
 				cells[i][j].cellLock = true;
 				lockedCells[k] = cells[i][j];
-				lockedCells[k].color = '#EEE600';
+				lockedCells[k].color = '#FFF000';
 				k++;
 			}
-
+		}
 
 		}
 	}
