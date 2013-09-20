@@ -35,7 +35,7 @@ var cellDimension = 10;
 var numCellsW = 50;
 var numCellsH = 50;
 var offset = 2;
-var bool = true;
+var bool = true; //initialized to being dead
 
 var cell = function(x,y,bool) {
 	var returnObj = {};
@@ -44,7 +44,6 @@ var cell = function(x,y,bool) {
 	returnObj.b = bool;
 	returnObj.cellLock = false;
 	returnObj.reDraw = function(color){
-		if(returnObj.cellLock === false){
 			var COLOR = color;
 			if(returnObj.b === false)
 			{
@@ -53,7 +52,7 @@ var cell = function(x,y,bool) {
 				var posY = returnObj.y*(cellDimension+offset);
 				ctx.fillRect(posX,posY,cellDimension, cellDimension);
 			}
-		}
+		
 		
 
 	};
@@ -90,7 +89,7 @@ var init = function(){
 			var math = Math.random()*10;
 			var rand = Math.floor(math);
 			var cellBool;
-			if(rand < 5)
+			if(rand < 8)
 			{
 				cellBool = true;
 			}
@@ -103,14 +102,15 @@ var init = function(){
 	}
 
 };
-var update = function(tempCells){
+var update = function(){
 	console.log("Update called!");
 	ctx.fillStyle = '#000000';
 	ctx.fillRect(0,0,1000,600);
 
 
-	for(var i =1; i<numCellsW-1;i++)
+	for(var i =0; i<numCellsW;i++)
 	{
+		tempCells[i] = [];
 		for(var j = 1; j <numCellsH-1; j++)
 		{
 			var liveCounter = 0;
@@ -118,17 +118,17 @@ var update = function(tempCells){
 			if(cells[i+1][j].b === false)
 			{
 				liveCounter++;
-				squareCounter++;
+				
 			}
 			if(cells[i+1][j+1].b === false)
 			{
 				liveCounter++;
-				squareCounter++;
+				
 			}
 			if(cells[i+1][j-1].b === false)
 			{
 				liveCounter++;
-				squareCounter++;
+				
 			}
 			if(cells[i][j+1].b === false)
 			{
@@ -151,70 +151,68 @@ var update = function(tempCells){
 				liveCounter++;
 			}
 
-			// if(cells[i][j].b === false && squareCounter === 3)
-			// {
-			// 	//console.log("SQUARE SHOULD BE LOCKED");
-			// 	tempCells[i][j].reDraw("#FFF000");
-			// 	tempCells[i][j].cellLock = true;
-			// 	//console.log(cells[i][j].cellLock);
-			// }
-			if(cells[i][j].b === true && liveCounter === 3)
-			{	
-				
-					tempCells[i][j].b = false;
-				
-			}
-			if(cells[i][j].b === false && liveCounter === 2)
-			{
-				
-					tempCells[i][j].b = false;
-			}
-				if(cells[i][j].b === false && liveCounter === 3)
-				{
-					
-						tempCells[i][j].b = false;
-					
-				}
-				else
-				{
-					
-						tempCells[i][j].b = true;
-					
-				}
-			}
+			
 
+		if(cells[i][j].b === false) {
+			if(liveCounter < 2) {
+				tempCells[i][j] = true;
+			} else if(liveCounter > 3) {
+				tempCells[i][j] = true;
+			} else {
+				tempCells[i][j] = false;
+			}
+		} else {
+			if(liveCounter === 3) {
+				tempCells[i][j] = false;
+			} else {
+				tempCells[i][j] = true;
+			}
 		}
 
 
-
-
-
+		if(cells[i][j].b === false && squareCounter === 8)
+			{
+				//console.log("SQUARE SHOULD BE LOCKED");
+				//tempCells[i][j].reDraw("#FFF000");
+				tempCells[i][j] = true;
+				cells[i][j].cellLock = true;
+				//console.log(cells[i][j].cellLock);
+			}
 
 	}
-	var tempCells = [];
-	var loop = function(){
+}
+
+}
+
+
+
+var tempCells = [];
+var loop = function(){
+	update();
+	var k,x;
+	for( k = 0; k<numCellsW;k++)
+	{
 		
-		var row;
-		for(var k = 0; k<numCellsW;k++)
+		for(x =0; x<numCellsH;x++)
 		{
-			row = [];
-			for(var x =0; x<cells[0].length;x++)
-			{
-				row[x] = cells[k][x];
+			cells[k][x].b = tempCells[k][x];
+		}
+	}
+
+
+	for(var i = 1; i < numCellsW-1; i++)
+	{
+		for (var j = 1; j < numCellsH-1; j++) {
+
+			if(cells[i][j].cellLock === false){
+				cells[i][j].reDraw("#838B8B");
+			} else {
+				console.log("locked cells being drawn");
+				cells[i][j].reDraw("#cc00cc");
 			}
-			tempCells[k] = row;
-		}
-		update(tempCells);
-
-		for(var i = 0; i < numCellsW; i++)
-		{
-			for (var j = 0; j < numCellsH; j++) {
-
-				if(cells[i][j].cellLock === false){
-					cells[i][j].reDraw("#838B8B");
-				}
-			};
-		}
-	// console.log("loop finished being called!");
+			
+		};
+	}
+// console.log("loop finished being called!");
 }
 init();
